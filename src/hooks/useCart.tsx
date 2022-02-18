@@ -12,6 +12,11 @@ interface UpdateProductAmount {
   amount: number;
 }
 
+interface ProductAvailableInStock {
+  productId: number;
+  amount: number;
+}
+
 interface CartContextData {
   cart: Product[];
   addProduct: (productId: number) => Promise<void>;
@@ -23,18 +28,26 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [cart, setCart] = useState<Product[]>(() => {
-    // const storagedCart = Buscar dados do localStorage
+    const storagedCart = localStorage.getItem('@RocketShoes:cart')
 
-    // if (storagedCart) {
-    //   return JSON.parse(storagedCart);
-    // }
+    if (storagedCart) {
+      return JSON.parse(storagedCart);
+    }
 
     return [];
   });
 
   const addProduct = async (productId: number) => {
     try {
-      // TODO
+      const productInCart = cart.find((product)=> product.id === productId)
+
+      if(productInCart)
+        await updateProductAmount({productId, amount: productInCart.amount + 1})
+      else{
+        if(await isProductAvailableInStock({productId, amount: 1})){
+          // TODO
+        }
+      }
     } catch {
       // TODO
     }
@@ -58,6 +71,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       // TODO
     }
   };
+
+  const isProductAvailableInStock = async ({productId, amount}: ProductAvailableInStock) => {
+    try {
+      // TODO
+    } catch {
+      toast.error('Quantidade solicitada fora de estoque');
+      return false
+    }
+  }
 
   return (
     <CartContext.Provider
