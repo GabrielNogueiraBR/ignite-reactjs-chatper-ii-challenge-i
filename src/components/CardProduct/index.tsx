@@ -1,26 +1,25 @@
 import React from "react";
 import { MdAddShoppingCart } from "react-icons/md";
+import { ProductFormatted } from "../../types";
 
 interface CardProductProps {
-  title: string;
-  priceFormatted: string;
-  src: string;
+  product: ProductFormatted;
+  handleAddProduct: (productId: number) => void;
 }
 
 const CardProduct = ({
-  title,
-  priceFormatted,
-  src,
+  product,
+  handleAddProduct,
 }: CardProductProps): JSX.Element => {
   return (
     <li>
-      <img src={src} alt={title} />
-      <strong>{title}</strong>
-      <span>{priceFormatted}</span>
+      <img src={product.image} alt={product.title} />
+      <strong>{product.title}</strong>
+      <span>{product.priceFormatted}</span>
       <button
         type="button"
         data-testid="add-product-button"
-        // onClick={() => handleAddProduct(product.id)}
+        onClick={() => handleAddProduct(product.id)}
       >
         <div data-testid="cart-product-quantity">
           <MdAddShoppingCart size={16} color="#FFF" />

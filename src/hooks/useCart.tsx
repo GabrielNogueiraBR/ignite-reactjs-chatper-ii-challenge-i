@@ -1,7 +1,7 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
-import { toast } from 'react-toastify';
-import { api } from '../services/api';
-import { Product, Stock } from '../types';
+import { createContext, ReactNode, useContext, useState } from "react";
+import { toast } from "react-toastify";
+import { api } from "../services/api";
+import { Product, Stock } from "../types";
 
 interface CartProviderProps {
   children: ReactNode;
@@ -28,7 +28,7 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [cart, setCart] = useState<Product[]>(() => {
-    const storagedCart = localStorage.getItem('@RocketShoes:cart')
+    const storagedCart = localStorage.getItem("@RocketShoes:cart");
 
     if (storagedCart) {
       return JSON.parse(storagedCart);
@@ -39,17 +39,28 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      const productInCart = cart.find((product)=> product.id === productId)
+      const productInCart = cart.find((product) => product.id === productId);
 
-      if(productInCart)
-        await updateProductAmount({productId, amount: productInCart.amount + 1})
-      else{
-        if(await isProductAvailableInStock({productId, amount: 1})){
-          // TODO
+      if (productInCart)
+        await updateProductAmount({
+          productId,
+          amount: productInCart.amount + 1,
+        });
+      else {
+        if (await isProductAvailableInStock({ productId, amount: 1 })) {
+          await api
+            .get(`products/${productId}`)
+            .then((response) => response.data)
+            .then((product: Product) => {
+              console.log(product);
+              setCart([...cart, product]);
+            });
+        } else {
+          console.log("aq");
         }
       }
     } catch {
-      // TODO
+      toast.error("Erro na adição do produto");
     }
   };
 
@@ -72,14 +83,25 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     }
   };
 
-  const isProductAvailableInStock = async ({productId, amount}: ProductAvailableInStock) => {
+  const isProductAvailableInStock = async ({
+    productId,
+    amount,
+  }: ProductAvailableInStock) => {
     try {
-      // TODO
+      return await api
+        .get(`/stock/${productId}`)
+        .then((response) => response.data)
+        .then((data: Stock) => data.amount >= amount)
+        .then((available) => {
+          if (!available)
+            throw new Error("Quantidade solicitada fora de estoque");
+          return available;
+        });
     } catch {
-      toast.error('Quantidade solicitada fora de estoque');
-      return false
+      toast.error("Quantidade solicitada fora de estoque");
+      return false;
     }
-  }
+  };
 
   return (
     <CartContext.Provider

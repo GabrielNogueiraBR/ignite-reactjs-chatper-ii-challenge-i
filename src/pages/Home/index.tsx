@@ -5,6 +5,7 @@ import { api } from "../../services/api";
 import { formatPrice } from "../../util/format";
 import { useCart } from "../../hooks/useCart";
 import CardProduct from "../../components/CardProduct";
+import { ProductFormatted } from "../../types";
 
 interface Product {
   id: number;
@@ -12,18 +13,13 @@ interface Product {
   price: number;
   image: string;
 }
-
-interface ProductFormatted extends Product {
-  priceFormatted: string;
-}
-
 interface CartItemsAmount {
   [key: number]: number;
 }
 
 const Home = (): JSX.Element => {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
-  // const { addProduct, cart } = useCart();
+  const { addProduct, cart } = useCart();
 
   // const cartItemsAmount = cart.reduce((sumAmount, product) => {
   //   // TODO
@@ -49,17 +45,16 @@ const Home = (): JSX.Element => {
   }, []);
 
   function handleAddProduct(id: number) {
-    // TODO
+    addProduct(id)
   }
 
   return (
     <ProductList>
-      {products.map((product) => (
+      {products.map((product: ProductFormatted) => (
         <CardProduct
           key={product.id}
-          title={product.title}
-          priceFormatted={product.priceFormatted}
-          src={product.image}
+          product={product}
+          handleAddProduct={handleAddProduct}
         />
       ))}
     </ProductList>
