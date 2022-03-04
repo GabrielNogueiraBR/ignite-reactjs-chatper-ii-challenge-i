@@ -4,11 +4,13 @@ import { ProductFormatted } from "../../types";
 
 interface CardProductProps {
   product: ProductFormatted;
+  cartItemAmount?: number;
   handleAddProduct: (productId: number) => void;
 }
 
 const CardProduct = ({
   product,
+  cartItemAmount,
   handleAddProduct,
 }: CardProductProps): JSX.Element => {
   return (
@@ -23,7 +25,7 @@ const CardProduct = ({
       >
         <div data-testid="cart-product-quantity">
           <MdAddShoppingCart size={16} color="#FFF" />
-          {/* {cartItemsAmount[product.id] || 0} */} 2
+          {cartItemAmount || 0}
         </div>
 
         <span>ADICIONAR AO CARRINHO</span>
