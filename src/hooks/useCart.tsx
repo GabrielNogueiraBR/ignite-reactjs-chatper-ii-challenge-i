@@ -58,11 +58,9 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
             .get(`products/${productId}`)
             .then((response) => response.data)
             .then((product: Product) => {
-              product.amount = 1
+              product.amount = 1;
               setCart([...cart, product]);
             });
-        } else {
-          toast.error("Quantidade solicitada fora de estoque");
         }
       }
     } catch {
@@ -83,9 +81,19 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      // TODO
+      if (amount <= 0) return;
+
+      if (await isProductAvailableInStock({ productId, amount })) {
+        setCart(
+          cart.map((product) => {
+            if (product.id === productId) product.amount = amount;
+
+            return product;
+          })
+        );
+      }
     } catch {
-      // TODO
+      toast.error("Erro na alteração de quantidade do produto");
     }
   };
 
