@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
 import { api } from "../services/api";
 import { Product, Stock } from "../types";
@@ -52,11 +58,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
             .get(`products/${productId}`)
             .then((response) => response.data)
             .then((product: Product) => {
-              console.log(product);
+              product.amount = 1
               setCart([...cart, product]);
             });
         } else {
-          console.log("aq");
+          toast.error("Quantidade solicitada fora de estoque");
         }
       }
     } catch {
@@ -102,6 +108,10 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       return false;
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("@RocketShoes:cart", JSON.stringify(cart));
+  }, [cart]);
 
   return (
     <CartContext.Provider
