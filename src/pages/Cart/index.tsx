@@ -31,15 +31,15 @@ const Cart = (): JSX.Element => {
   );
 
   function handleProductIncrement(product: Product) {
-    // TODO
+    console.log('increment')
   }
 
   function handleProductDecrement(product: Product) {
-    // TODO
+    console.log('decrement')
   }
 
   function handleRemoveProduct(productId: number) {
-    // TODO
+    console.log('remove')
   }
 
   return (
@@ -58,11 +58,12 @@ const Cart = (): JSX.Element => {
           {cartFormatted.map((product) => (
             <CartItem
               key={product.id}
-              title={product.title}
-              image={product.image}
-              amount={product.amount}
+              product={product}
               priceFormatted={product.priceFormatted}
               subTotal={product.subTotal}
+              handleProductDecrement={handleProductDecrement}
+              handleProductIncrement={handleProductIncrement}
+              handleRemoveProduct={handleRemoveProduct}
             />
           ))}
         </tbody>

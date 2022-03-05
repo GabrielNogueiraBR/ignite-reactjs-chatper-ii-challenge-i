@@ -5,29 +5,32 @@ import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
 } from "react-icons/md";
+import { Product } from "../../types";
 
 interface CartItemProps {
-  title: string;
-  image: string;
-  amount: number;
+  product: Product
   priceFormatted: string;
   subTotal: string;
+  handleProductDecrement: (product: Product) => void
+  handleProductIncrement: (product: Product) => void
+  handleRemoveProduct: (productId: number) => void
 }
 
 const CartItem = ({
-  title,
-  image,
-  amount,
+  product,
   priceFormatted,
   subTotal,
+  handleProductDecrement,
+  handleProductIncrement,
+  handleRemoveProduct,
 }: CartItemProps): JSX.Element => {
   return (
     <tr data-testid="product">
       <td>
-        <img src={image} alt={title} />
+        <img src={product.image} alt={product.title} />
       </td>
       <td>
-        <strong>{title}</strong>
+        <strong>{product.title}</strong>
         <span>{priceFormatted}</span>
       </td>
       <td>
@@ -35,8 +38,8 @@ const CartItem = ({
           <button
             type="button"
             data-testid="decrement-product"
-            // disabled={product.amount <= 1}
-            // onClick={() => handleProductDecrement()}
+            disabled={product.amount <= 1}
+            onClick={() => handleProductDecrement(product)}
           >
             <MdRemoveCircleOutline size={20} />
           </button>
@@ -44,12 +47,12 @@ const CartItem = ({
             type="text"
             data-testid="product-amount"
             readOnly
-            value={amount}
+            value={product.amount}
           />
           <button
             type="button"
             data-testid="increment-product"
-            // onClick={() => handleProductIncrement()}
+            onClick={() => handleProductIncrement(product)}
           >
             <MdAddCircleOutline size={20} />
           </button>
@@ -62,7 +65,7 @@ const CartItem = ({
         <button
           type="button"
           data-testid="remove-product"
-          // onClick={() => handleRemoveProduct(product.id)}
+          onClick={() => handleRemoveProduct(product.id)}
         >
           <MdDelete size={20} />
         </button>
